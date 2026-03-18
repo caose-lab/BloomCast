@@ -1,14 +1,27 @@
+.DS_Store
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+nohup.out
 
-*.csv
+# Local secrets
+src/pipeline/.ncei_token
+utils/.webflow_token
+
+# Runtime outputs
+logs/
+results/
+models/
+src/pipeline/logs/
+src/pipeline/data/
+src/pipeline/final_data/
+
+# Legacy one-off files from the original repo
 chll_nn copy.py
 mean_chll.py
-mean_chll.py
 mean_chll copy.py
-.DS_Store
-.ipynb_checkpoints
 chll_nn_all_prod.py
 chll_nn_flags.py
 ieee.py
 new.py
 salida.txt
-nohup.out

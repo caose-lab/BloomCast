@@ -1,4 +1,4 @@
-name: remotesent
+name: bloomcast
 channels:
   - eumetsat
   - conda-forge

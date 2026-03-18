@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Harmful Algal Bloom Risk Gauges</title>
+  <style>
+    :root {
+      --bg: transparent;
+      --text: #e5e7eb;
+      --low: #22c55e;
+      --med: #f97316;
+      --high: #ef4444;
+      --needle: #facc15;
+      --muted: #6b7280;
+    }
+    .wrap {
+      max-width: 1200px; margin: 24px auto; padding: 16px 20px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+    }
+    .title { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 18px; }
+    .gauges {
+      display: flex; gap: 28px; align-items: flex-start; justify-content: center; flex-wrap: wrap;
+    }
+    .gauge-card {
+      width: min(560px, 100%);
+    }
+    .card-title { font-size: 1.05rem; font-weight: 700; text-align: center; margin-bottom: 6px; }
+    .gauge { width: 100%; height: auto; display: block; }
+    .readout { text-align:center; margin-top: 10px; font-variant-numeric: tabular-nums; }
+    .badge { display:inline-block; padding: 4px 10px; border-radius: 999px; font-weight:700 }
+    .badge.low    { background: rgba(34,197,94,.2);  color: var(--low) }
+    .badge.medium { background: rgba(249,115,22,.2); color: var(--med) }
+    .badge.high   { background: rgba(239,68,68,.2); color: var(--high) }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">Harmful Algal Bloom Risk</div>
+
+    <div class="gauges">
+      <!-- Gauge A: Next Week -->
+      <div class="gauge-card" id="gauge-next-week">
+        <div class="card-title">Next Week</div>
+        <svg class="gauge" viewBox="0 0 200 120" role="img" aria-label="HAB risk gauge - this week">
+          <!-- three colored wedges (low, medium, high) -->
+          <!-- low: 180° to 120° -->
+          <path d="M 0 100 A 100 100 0 0 1 50 13.4 L 100 100 Z"
+                fill="rgba(34,197,94,.25)" stroke="var(--low)" stroke-width="0.5"/>
+          <!-- medium: 120° to 60° -->
+          <path d="M 50 13.4 A 100 100 0 0 1 150 13.4 L 100 100 Z"
+                fill="rgba(249,115,22,.25)" stroke="var(--med)" stroke-width="0.5"/>
+          <!-- high: 60° to 0° -->
+          <path d="M 150 13.4 A 100 100 0 0 1 200 100 L 100 100 Z"
+                fill="rgba(239,68,68,.25)" stroke="var(--high)" stroke-width="0.5"/>
+
+          <!-- needle -->
+          <g class="needle">
+            <line class="needle-shaft" x1="100" y1="100" x2="100" y2="100"
+                  stroke="var(--needle)" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="100" cy="100" r="7" fill="var(--bg)" stroke="var(--needle)" stroke-width="4"/>
+          </g>
+
+          <!-- white border -->
+          <path d="M 0 100 A 100 100 0 0 1 200 100"
+                fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+
+          <!-- labels -->
+          <text x="6"   y="112" font-size="10" font-weight="700" fill="var(--low)">Low</text>
+          <text x="100" y="112" font-size="10" font-weight="700" text-anchor="middle" fill="var(--med)">Medium</text>
+          <text x="194" y="112" font-size="10" font-weight="700" text-anchor="end" fill="var(--high)">High</text>
+        </svg>
+
+        <div class="readout">
+          Current risk level: <span class="badge">--</span>
+        </div>
+      </div>
+
+      <!-- Gauge B: Next 2 Weeks -->
+      <div class="gauge-card" id="gauge-next-2week">
+        <div class="card-title">Next 2 Weeks</div>
+        <svg class="gauge" viewBox="0 0 200 120" role="img" aria-label="HAB risk gauge - next week">
+          <!-- three colored wedges (reuse same geometry/colors) -->
+          <path d="M 0 100 A 100 100 0 0 1 50 13.4 L 100 100 Z"
+                fill="rgba(34,197,94,.25)" stroke="var(--low)" stroke-width="0.5"/>
+          <path d="M 50 13.4 A 100 100 0 0 1 150 13.4 L 100 100 Z"
+                fill="rgba(249,115,22,.25)" stroke="var(--med)" stroke-width="0.5"/>
+          <path d="M 150 13.4 A 100 100 0 0 1 200 100 L 100 100 Z"
+                fill="rgba(239,68,68,.25)" stroke="var(--high)" stroke-width="0.5"/>
+
+          <g class="needle">
+            <line class="needle-shaft" x1="100" y1="100" x2="100" y2="100"
+                  stroke="var(--needle)" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="100" cy="100" r="7" fill="var(--bg)" stroke="var(--needle)" stroke-width="4"/>
+          </g>
+
+          <path d="M 0 100 A 100 100 0 0 1 200 100"
+                fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+
+          <text x="6"   y="112" font-size="10" font-weight="700" fill="var(--low)">Low</text>
+          <text x="100" y="112" font-size="10" font-weight="700" text-anchor="middle" fill="var(--med)">Medium</text>
+          <text x="194" y="112" font-size="10" font-weight="700" text-anchor="end" fill="var(--high)">High</text>
+        </svg>
+
+        <div class="readout">
+          Forecast risk level: <span class="badge">--</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple gauge factory that operates locally within a container
+    function makeGauge(containerId) {
+      const el = document.getElementById(containerId);
+      const shaft = el.querySelector('.needle-shaft');
+      const badgeEl = el.querySelector('.badge');
+
+      const CX = 100, CY = 100, R = 90;
+
+      function setAngle(deg){
+        const rad = deg * Math.PI / 180;
+        const x = CX + R * Math.cos(rad);
+        const y = CY - R * Math.sin(rad);
+        shaft.setAttribute('x2', x);
+        shaft.setAttribute('y2', y);
+      }
+
+      // Map a numeric value to an angle and badge based on thresholds:
+      // 0-8.58 -> 180..120 (low), 8.59-18.09 -> 121..60 (medium),
+      // 18.1-40 -> 60..0 (high), >40 -> 0.
+      function setValue(raw){
+        let v = Number(raw);
+        if (isNaN(v)) v = 0;
+        const lowMax = 8.58;
+        const medMax = 18.09;
+        const highMax = 40;
+
+        let angle;
+        let label;
+        let cls;
+
+        if (v <= lowMax) {
+          // 0 -> 180, lowMax -> 120
+          const t = Math.max(0, v) / lowMax;
+          angle = 180 - t * 60;
+          label = 'Low';
+          cls = 'badge low';
+        } else if (v <= medMax) {
+          // 8.59 -> 120, 18.09 -> 60
+          const span = medMax - lowMax;
+          const t = (v - lowMax) / span;
+          angle = 120 - t * 60;
+          label = 'Medium';
+          cls = 'badge medium';
+        } else if (v <= highMax) {
+          // 18.1 -> 60, 40 -> 0
+          const span = highMax - medMax;
+          const t = (v - medMax) / span;
+          angle = 60 - t * 60;
+          label = 'High';
+          cls = 'badge high';
+        } else {
+          angle = 0;
+          label = 'High';
+          cls = 'badge high';
+        }
+
+        setAngle(angle);
+        if (badgeEl) {
+          badgeEl.textContent = label;
+          badgeEl.className = cls;
+        }
+        return { angle, label };
+      }
+
+      return { setValue };
+    }
+
+    // Build both gauges
+    const gaugeNextWeek = makeGauge('gauge-next-week');
+    const gaugeNext2Week = makeGauge('gauge-next-2week');
+
+    // Option A: pull URLs from a manifest (JSON) at a stable URL you control.
+    // Option B: read URLs from data attributes injected by Webflow CMS (preferred inside Webflow).
+    const MANIFEST_URL = ""; // leave blank to skip manifest fetch
+
+    // Fallback URLs if manifest/data attrs are not present (can be set via setHABPredUrls)
+    let PRED_URL_7D = "";
+    let PRED_URL_15D = "";
+
+    async function fetchFirstPred(url) {
+      const resp = await fetch(url, { cache: "no-cache" });
+      if (!resp.ok) throw new Error(`Failed to fetch ${url}: ${resp.status}`);
+      const text = await resp.text();
+      const lines = text.trim().split(/\r?\n/);
+      if (lines.length < 2) throw new Error(`No data rows in ${url}`);
+      const headers = lines[0].split(",").map(h => h.trim());
+      const idx = headers.indexOf("y_pred");
+      if (idx === -1) throw new Error(`y_pred column not found in ${url}`);
+      const firstRow = lines[1].split(",");
+      const val = Number(firstRow[idx]);
+      if (Number.isNaN(val)) throw new Error(`y_pred not numeric in ${url}`);
+      return val;
+    }
+
+    function loadFromDataAttrs() {
+      const holder = document.querySelector("[data-xgboost-1wk-url],[data-xgboost-2wk-url]");
+      if (!holder) return false;
+      const u1 = holder.getAttribute("data-xgboost-1wk-url") || "";
+      const u2 = holder.getAttribute("data-xgboost-2wk-url") || "";
+      if (u1) PRED_URL_7D = u1;
+      if (u2) PRED_URL_15D = u2;
+      return !!(u1 && u2);
+    }
+
+    async function loadManifest() {
+      if (!MANIFEST_URL) return null;
+      const resp = await fetch(MANIFEST_URL, { cache: "no-cache" });
+      if (!resp.ok) throw new Error(`Failed to fetch manifest ${MANIFEST_URL}: ${resp.status}`);
+      return resp.json();
+    }
+
+    async function loadAndSet() {
+      try {
+        const hasDataAttrs = loadFromDataAttrs();
+        if (!hasDataAttrs) {
+          const manifest = await loadManifest();
+          if (manifest) {
+            if (manifest.xgboost_7d) PRED_URL_7D = manifest.xgboost_7d;
+            if (manifest.xgboost_15d) PRED_URL_15D = manifest.xgboost_15d;
+          }
+        }
+        if (!PRED_URL_7D || !PRED_URL_15D) throw new Error("Prediction URLs not set");
+
+        const [v7, v15] = await Promise.all([fetchFirstPred(PRED_URL_7D), fetchFirstPred(PRED_URL_15D)]);
+        gaugeNextWeek.setValue(v7);
+        gaugeNext2Week.setValue(v15);
+      } catch (err) {
+        console.error("Error loading predictions:", err);
+        // Show a fallback needle position if fetch fails
+        gaugeNextWeek.setValue(0);
+        gaugeNext2Week.setValue(0);
+      }
+    }
+
+    // Initialize after DOM/Webflow is ready
+    (function init(){
+      function start(){
+        loadAndSet();
+      }
+      if (window.Webflow && Array.isArray(window.Webflow)) {
+        window.Webflow.push(start);
+      } else if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+      } else {
+        start();
+      }
+    })();
+
+    // Expose setters for your ML wiring
+    // v should be a numeric chlorophyll/risk value (will be mapped to an angle as defined above)
+    window.setHABRiskNextWeek = (v) => gaugeNextWeek.setValue(v);
+    window.setHABRiskNext2Week = (v) => gaugeNext2Week.setValue(v);
+    // Expose loader and URL overrides
+    window.loadHABPredictions = () => loadAndSet();
+    window.setHABPredUrls = (url7d, url15d) => {
+      if (url7d) PRED_URL_7D = url7d;
+      if (url15d) PRED_URL_15D = url15d;
+    };
+  </script>
+</body>
+</html>

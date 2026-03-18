@@ -1,0 +1,76 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >> endobj
+4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+5 0 obj << /Length 1557 >> stream
+BT
+/F1 18 Tf
+72 760 Td
+(BloomCast Frontend Handoff) Tj
+0 -18 Td
+() Tj
+0 -18 Td
+(Overview) Tj
+0 -18 Td
+(BloomCast is a batch pipeline, not a live API.) Tj
+0 -18 Td
+(Data is generated daily as CSV/JSON files, then uploaded to Webflow Assets and CMS.) Tj
+0 -18 Td
+(The frontend should treat Webflow as the published source of truth.) Tj
+0 -18 Td
+() Tj
+0 -18 Td
+(Backend Flow) Tj
+0 -18 Td
+(1. run_bloomcast.sh builds the daily dataset and model outputs.) Tj
+0 -18 Td
+(2. gold_merge.py writes SJL_daily_df.csv, the canonical merged daily dataset.) Tj
+0 -18 Td
+(3. predict.py writes forecast CSVs to results/preds.) Tj
+0 -18 Td
+(4. nowcast.py writes the current nowcast CSV to results/nowcasts.) Tj
+0 -18 Td
+(5. run_upload_to_webflow.sh uploads assets and updates Webflow CMS.) Tj
+0 -18 Td
+() Tj
+0 -18 Td
+(Published Outputs) Tj
+0 -18 Td
+(- Forecast CSV assets: 7-day and 15-day predictions.) Tj
+0 -18 Td
+(- Environmental JSON asset built from the last 60 days of SJL_daily_df.csv.) Tj
+0 -18 Td
+(- CMS risk cards for today, next week, and next two weeks.) Tj
+0 -18 Td
+() Tj
+0 -18 Td
+(What The Frontend Uses) Tj
+0 -18 Td
+(- Webflow asset URLs for downloadable/raw data files.) Tj
+0 -18 Td
+(- Webflow CMS fields for risk label, risk level, risk score, and last-updated.) Tj
+0 -18 Td
+() Tj
+0 -18 Td
+(Operational Notes) Tj
+0 -18 Td
+(- Updates happen in daily batches, not in real time.) Tj
+0 -18 Td
+(- If upload or CMS publishing fails, the site may show stale data even if local files are current.) Tj
+0 -18 Td
+(- Handle missing or stale asset URLs gracefully.) Tj
+ET
+endstream endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000311 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+1920
+%%EOF
