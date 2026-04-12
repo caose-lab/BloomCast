@@ -12,6 +12,8 @@ utils/.webflow_token
 logs/
 results/
 models/
+!models/hab_operational/
+!models/hab_operational/**
 src/pipeline/logs/
 src/pipeline/data/
 src/pipeline/final_data/
