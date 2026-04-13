@@ -189,12 +189,7 @@ def _combine_operational_signals(
 
 def build_operational_summary(forecast_package: dict[str, dict[str, Any]]) -> dict[str, Any]:
     prediction_date = forecast_package["week_1"]["regression"]["prediction_date"]
-    separate_outputs = {
-        "regression": {},
-        "risk_3class": {},
-        "high_risk_alert": {},
-    }
-    combined_outputs: dict[str, dict[str, Any]] = {}
+    weeks: dict[str, dict[str, Any]] = {}
 
     for horizon in (1, 2, 3):
         source_week_key = f"week_{horizon}"
@@ -205,10 +200,7 @@ def build_operational_summary(forecast_package: dict[str, dict[str, Any]]) -> di
         risk_3class = _transform_risk_3class(source_payload["risk_3class"])
         high_risk_alert = _transform_high_risk_alert(source_payload["high_risk"])
 
-        separate_outputs["regression"][summary_week_key] = regression
-        separate_outputs["risk_3class"][summary_week_key] = risk_3class
-        separate_outputs["high_risk_alert"][summary_week_key] = high_risk_alert
-        combined_outputs[summary_week_key] = {
+        weeks[summary_week_key] = {
             "regression": regression,
             "risk_3class": risk_3class,
             "high_risk_alert": high_risk_alert,
@@ -221,8 +213,7 @@ def build_operational_summary(forecast_package: dict[str, dict[str, Any]]) -> di
 
     return {
         "prediction_date": prediction_date,
-        "separate_outputs": separate_outputs,
-        "combined_outputs": combined_outputs,
+        "weeks": weeks,
     }
 
 

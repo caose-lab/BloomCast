@@ -33,14 +33,8 @@ class HabForecastPipelineSmokeTests(unittest.TestCase):
             self.assertEqual(sorted(forecast_payload["forecast_package"].keys()), ["week_1", "week_2", "week_3"])
 
             self.assertEqual(summary_payload["prediction_date"], expected_prediction_date)
-            self.assertEqual(
-                sorted(summary_payload["separate_outputs"].keys()),
-                ["high_risk_alert", "regression", "risk_3class"],
-            )
-            self.assertEqual(
-                sorted(summary_payload["combined_outputs"].keys()),
-                ["week1", "week2", "week3"],
-            )
+            self.assertEqual(sorted(summary_payload.keys()), ["prediction_date", "weeks"])
+            self.assertEqual(sorted(summary_payload["weeks"].keys()), ["week1", "week2", "week3"])
 
     def test_build_operational_summary_matches_reference_shape(self) -> None:
         forecast_package = {
@@ -158,20 +152,20 @@ class HabForecastPipelineSmokeTests(unittest.TestCase):
 
         self.assertEqual(summary["prediction_date"], "2026-04-13")
         self.assertEqual(
-            summary["separate_outputs"]["regression"]["week1"]["predicted_avg_mg_m3"],
+            summary["weeks"]["week1"]["regression"]["predicted_avg_mg_m3"],
             10.0,
         )
         self.assertEqual(
-            summary["separate_outputs"]["high_risk_alert"]["week1"]["predicted_high_risk"],
+            summary["weeks"]["week1"]["high_risk_alert"]["predicted_high_risk"],
             "high",
         )
         self.assertEqual(
-            summary["combined_outputs"]["week2"]["operational_assessment"]["warning_level"],
+            summary["weeks"]["week2"]["operational_assessment"]["warning_level"],
             "high",
         )
         self.assertIn(
             "signal_agreement_count",
-            summary["combined_outputs"]["week3"]["operational_assessment"],
+            summary["weeks"]["week3"]["operational_assessment"],
         )
 
 
