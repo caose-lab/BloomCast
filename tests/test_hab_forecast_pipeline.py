@@ -5,18 +5,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import pandas as pd
-
 from src.pipeline.hab_forecast_pipeline import build_operational_summary, run
 
 
 class HabForecastPipelineSmokeTests(unittest.TestCase):
     def test_run_writes_forecast_and_summary_json(self) -> None:
         input_path = Path("src/pipeline/final_data/SJL_daily_df.csv")
-        expected_prediction_date = (
-            pd.read_csv(input_path, usecols=["date"], parse_dates=["date"])["date"].max()
-            + pd.Timedelta(days=1)
-        ).date().isoformat()
         with tempfile.TemporaryDirectory() as tmpdir:
             output_paths = run(input_path, Path(tmpdir))
 
@@ -29,11 +23,13 @@ class HabForecastPipelineSmokeTests(unittest.TestCase):
             summary_payload = json.loads(summary_path.read_text(encoding="utf-8"))
 
             self.assertEqual(forecast_payload["input_csv"], str(input_path))
-            self.assertEqual(forecast_payload["prediction_date"], expected_prediction_date)
+            self.assertIn("generated_at_utc", forecast_payload)
+            self.assertNotIn("prediction_date", forecast_payload)
             self.assertEqual(sorted(forecast_payload["forecast_package"].keys()), ["week_1", "week_2", "week_3"])
 
-            self.assertEqual(summary_payload["prediction_date"], expected_prediction_date)
-            self.assertEqual(sorted(summary_payload.keys()), ["prediction_date", "weeks"])
+            self.assertIn("generated_at_utc", summary_payload)
+            self.assertNotIn("prediction_date", summary_payload)
+            self.assertEqual(sorted(summary_payload.keys()), ["generated_at_utc", "weeks"])
             self.assertEqual(sorted(summary_payload["weeks"].keys()), ["week1", "week2", "week3"])
 
     def test_build_operational_summary_matches_reference_shape(self) -> None:
@@ -148,9 +144,12 @@ class HabForecastPipelineSmokeTests(unittest.TestCase):
             },
         }
 
-        summary = build_operational_summary(forecast_package)
+        summary = build_operational_summary(
+            forecast_package,
+            generated_at_utc="2026-04-16T12:34:56",
+        )
 
-        self.assertEqual(summary["prediction_date"], "2026-04-13")
+        self.assertEqual(summary["generated_at_utc"], "2026-04-16T12:34:56")
         self.assertEqual(
             summary["weeks"]["week1"]["regression"]["predicted_avg_mg_m3"],
             10.0,

@@ -46,7 +46,7 @@ def _validate_input(input_path: Path) -> None:
 
 
 def _generated_at_utc() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
 
 
 def _transform_regression(regression: dict[str, Any], horizon: int) -> dict[str, Any]:
@@ -187,8 +187,10 @@ def _combine_operational_signals(
     }
 
 
-def build_operational_summary(forecast_package: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    prediction_date = forecast_package["week_1"]["regression"]["prediction_date"]
+def build_operational_summary(
+    forecast_package: dict[str, dict[str, Any]],
+    generated_at_utc: str,
+) -> dict[str, Any]:
     weeks: dict[str, dict[str, Any]] = {}
 
     for horizon in (1, 2, 3):
@@ -212,7 +214,7 @@ def build_operational_summary(forecast_package: dict[str, dict[str, Any]]) -> di
         }
 
     return {
-        "prediction_date": prediction_date,
+        "generated_at_utc": generated_at_utc,
         "weeks": weeks,
     }
 
@@ -229,14 +231,13 @@ def run(input_path: Path, output_dir: Path) -> dict[str, Path]:
     LOGGER.info("Running HAB operational forecast for %s", input_path)
 
     forecast_package = predict_operational_package(csv_path=input_path)
-    prediction_date = forecast_package["week_1"]["regression"]["prediction_date"]
+    generated_at_utc = _generated_at_utc()
     forecast_payload = {
-        "generated_at_utc": _generated_at_utc(),
+        "generated_at_utc": generated_at_utc,
         "input_csv": str(input_path),
-        "prediction_date": prediction_date,
         "forecast_package": forecast_package,
     }
-    summary_payload = build_operational_summary(forecast_package)
+    summary_payload = build_operational_summary(forecast_package, generated_at_utc=generated_at_utc)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     output_paths = {
